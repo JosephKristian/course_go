@@ -40,15 +40,6 @@ func IsValidEmail(email string) bool {
 	return re.MatchString(email)
 }
 
-// generateOtp menghasilkan kode OTP dengan panjang tertentu.
-func GenerateOtp(length int) string {
-	otp := make([]byte, length)
-	for i := range otp {
-		otp[i] = byte(rand.Intn(10) + '0')
-	}
-	return string(otp)
-}
-
 // generateRandomPassword menghasilkan password acak dengan panjang tertentu.
 func GenerateRandomPassword(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"

@@ -10,7 +10,6 @@ import (
 	"gitlab.com/ipaymupreviews/golang-gin-poc/config"
 	"gitlab.com/ipaymupreviews/golang-gin-poc/helpers"
 	"gitlab.com/ipaymupreviews/golang-gin-poc/models"
-	"gitlab.com/ipaymupreviews/golang-gin-poc/services"
 	"gorm.io/gorm"
 )
 
@@ -84,7 +83,7 @@ func registerService(data *models.RegisterInput) (*models.User, error) {
 		receiver = data.Phone
 	}
 
-	_, err = services.SendOtp(data.VerificationChannel,
+	_, err = helpers.SendOtp(data.VerificationChannel,
 		processName,
 		userUUID,
 		data.Name,
