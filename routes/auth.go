@@ -16,6 +16,7 @@ func AuthRoutes(router *gin.Engine) {
 
 			auth := api.Group("/register")
 			{
+				auth.POST("/", controller.RegisterController)
 				auth.POST("/email-confirm", controller.EmailConfirmController)
 				auth.POST("/resend-email-confirm", controller.ResendEmailConfirmController)
 			}
