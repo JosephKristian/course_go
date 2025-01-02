@@ -41,30 +41,30 @@ func RegisterController(c *gin.Context) {
 
 	log.Println("[INFO] Input data validated.")
 
-	// // Panggil service untuk registrasi user
-	// registeredUser, err := services.registerService
+	// Panggil service untuk registrasi user
+	registeredUser, err := services.registerService
 
-	// if err != nil {
-	// 	log.Printf("[ERROR] Registration failed: %v", err)
-	// 	c.JSON(500, gin.H{
-	// 		"status":    "error",
-	// 		"data":      nil,
-	// 		"message":   "Registration failed",
-	// 		"errorCode": 500,
-	// 		"errors":    err.Error(),
-	// 	})
-	// 	return
-	// }
+	if err != nil {
+		log.Printf("[ERROR] Registration failed: %v", err)
+		c.JSON(500, gin.H{
+			"status":    "error",
+			"data":      nil,
+			"message":   "Registration failed",
+			"errorCode": 500,
+			"errors":    err.Error(),
+		})
+		return
+	}
 
-	// log.Printf("[INFO] User registered successfully: %s", registeredUser.Email)
+	log.Printf("[INFO] User registered successfully: %s", registeredUser.Email)
 
-	// // Respons sukses setelah berhasil registrasi
-	// c.Header("Location", "/db/v1/auth/register/"+registeredUser.Email)
-	// c.JSON(201, gin.H{
-	// 	"status":  "success",
-	// 	"data":    userInput,
-	// 	"message": "User registered successfully",
-	// })
+	// Respons sukses setelah berhasil registrasi
+	c.Header("Location", "/db/v1/auth/register/"+registeredUser.Email)
+	c.JSON(201, gin.H{
+		"status":  "success",
+		"data":    userInput,
+		"message": "User registered successfully",
+	})
 }
 
 func AccountActivationController(c *gin.Context) {
