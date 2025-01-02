@@ -14,11 +14,11 @@ func AuthRoutes(router *gin.Engine) {
 		{
 			auth.POST("/login", controller.LoginController)
 
-			auth := api.Group("/register")
+			register := auth.Group("/register")
 			{
-				auth.POST("/", controller.RegisterController)
-				auth.POST("/email-confirm", controller.EmailConfirmController)
-				auth.POST("/resend-email-confirm", controller.ResendEmailConfirmController)
+				register.POST("/", controller.RegisterController)
+				register.POST("/email-confirm", controller.EmailConfirmController)
+				register.POST("/resend-email-confirm", controller.ResendEmailConfirmController)
 			}
 			// Route untuk aktivasi akun pengguna
 			auth.POST("/account-activation", controller.AccountActivationController)
