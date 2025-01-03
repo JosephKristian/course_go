@@ -1,8 +1,13 @@
 package helpers
 
 import (
+	"fmt"
+	"log"
 	"math/rand"
+	"strings"
 	"time"
+
+	notification "gitlab.com/ipaymupreviews/golang-gin-poc/notifications"
 )
 
 func GenerateOtp(length int) string {
@@ -14,46 +19,32 @@ func GenerateOtp(length int) string {
 	return string(otp)
 }
 
-// Send OTP
-func SendOtp(via, processName, token, receiverName, receiver string, otpLength, expiredInSeconds int, lang string) (string, error) {
-	otp := GenerateOtp(otpLength)
+// SendOtp sends an OTP to the specified channel (email, sms, or whatsapp).
+func SendOtp(otp, via, processName, token, receiverName, receiver string, otpLength, expiredInSeconds int, lang string) (string, error) {
+	var sendErr error
+	var otpSentMessage string
 
-	return otp, nil
-	// expiredAt := time.Now().Add(time.Duration(expiredInSeconds) * time.Second)
+	switch strings.ToLower(via) {
+	case "email":
+		sendErr = notification.SendEmail(receiver, receiverName, processName, otp, lang)
+		otpSentMessage = "OTP sent successfully via email."
+	case "sms":
+		message := fmt.Sprintf("Your OTP for %s is %s. It is valid for %d minutes.", processName, otp, expiredInSeconds/60)
+		sendErr = notification.SendSms(receiver, message)
+		otpSentMessage = "OTP sent successfully via SMS."
+	case "whatsapp":
+		sendErr = notification.SendWhatsapp(receiver, processName, otp, expiredInSeconds/60, lang)
+		otpSentMessage = "OTP sent successfully via WhatsApp."
+	default:
+		return "", fmt.Errorf("unsupported OTP channel: %s", via)
+	}
 
-	// otpUUID := uuid.New().String() // Generate UUID
-	// // otpData := models.Otp{
-	// // 	Uuid:        otpUUID,
-	// // 	Otp:         otp,
-	// // 	Token:       token,
-	// // 	Destination: receiver,
-	// // 	Flow:        processName,
-	// // 	Channel:     via,
-	// // 	ExpiredAt:   expiredAt,
-	// // }
+	// If there's an error while sending the OTP
+	if sendErr != nil {
+		log.Printf("[ERROR] Failed to send OTP via %s to %s: %v", via, receiver, sendErr)
+		return "", fmt.Errorf("failed to send OTP via %s: %w", via, sendErr)
+	}
 
-	// // err := s.otpRepository.StoreOtp(&otpData)
-	// if err != nil {
-	// 	return "", fmt.Errorf("failed to store OTP: %v", err)
-	// }
-
-	// var message string
-	// switch via {
-	// case "email":
-	// 	err = notification.SendEmail(receiver, receiverName, processName, otp, lang)
-	// case "sms":
-	// 	message = fmt.Sprintf("OTP for %s: %s. Valid for %d minutes.", processName, otp, expiredInSeconds/60)
-	// 	err = notification.SendSms(receiver, message)
-	// case "whatsapp":
-	// 	err = notification.SendWhatsapp(receiver, processName, otp, expiredInSeconds/60, lang)
-	// default:
-	// 	return "", errors.New("unsupported channel")
-	// }
-
-	// if err != nil {
-	// 	return "", fmt.Errorf("failed to send OTP: %v", err)
-	// }
-
-	// log.Printf("[INFO] OTP sent successfully via %s to %s.", via, receiver)
-	// return otpData.Uuid, nil
+	log.Printf("[INFO] %s to %s.", otpSentMessage, receiver)
+	return otpSentMessage, nil
 }

@@ -8,7 +8,8 @@ import (
 
 type User struct {
 	gorm.Model
-	UUID             string    `json:"uuid" form:"uuid" gorm:"primary_key"`
+	UUID             string    `json:"uuid" form:"uuid" gorm:"index;unique;default:uuid_generate_v4();"`
+	Otp              Otp       `gorm:"foreignKey:UserID;references:UUID"`
 	Name             string    `json:"name" form:"name" validate:"required"`
 	Email            string    `json:"email" form:"email" validate:"omitempty,email"`
 	Phone            string    `json:"phone" form:"phone" validate:"required,numeric,len=10"`
@@ -20,6 +21,7 @@ type User struct {
 	DeviceName       string    `json:"device_name" form:"device_name"`
 	IP               string    `json:"ip,omitempty" form:"ip,omitempty"`
 	VerificationCode string    `json:"verification_code" form:"verification_code"` // Added VerificationCode field
+	IsActive         bool      `json:"is_active" form:"is_active" gorm:"default:false"`
 	CreatedAt        time.Time `json:"created_at" form:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at" form:"updated_at"`
 }

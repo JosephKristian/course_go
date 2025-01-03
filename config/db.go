@@ -39,7 +39,17 @@ func Connect() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&models.User{})
+
+	// Migrasi tabel User
+	if err := db.AutoMigrate(&models.User{}); err != nil {
+		log.Fatalf("failed to migrate user table: %v", err)
+	}
+
+	// Migrasi tabel Otp
+	if err := db.AutoMigrate(&models.Otp{}); err != nil {
+		log.Fatalf("failed to migrate otp table: %v", err)
+	}
+
 	DB = db
 
 }
